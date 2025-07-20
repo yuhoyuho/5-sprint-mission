@@ -1,19 +1,14 @@
 package com.sprint.mission.discodeit.service;
 
-import java.util.List;
-import java.util.Map;
+import com.sprint.mission.discodeit.entity.Channel;
+import com.sprint.mission.discodeit.entity.Message;
+import com.sprint.mission.discodeit.entity.User;
 
 public interface MessageService {
 
-    void sendMessage(String username, String content);
+    Message sendMessage(User user, Channel channel, String content);
 
-    boolean editMessage(String username, String content, String newContent);
+    void deleteMessage(Message message);
 
-    Map<String, List<String>> findAll();
-
-    List<String> findAllByUsername(String username);
-
-    boolean deleteOne(String username, String content);
-
-    boolean deleteAll(String username);
+    Message updateMessage(Message message, String newContent);
 }

@@ -1,83 +1,49 @@
 package com.sprint.mission.discodeit.service.jcf;
 
 import com.sprint.mission.discodeit.entity.Channel;
+import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.service.ChannelService;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class JCFChannelService implements ChannelService {
-    private final List<Channel> list = new ArrayList<>();
 
-    @Override
-    public boolean addChannel(String name, String description) {
-        Channel channel = new Channel(name, description);
-        if(isExisted(name)) {
-            list.add(channel);
-            return true;
-        }
-        return false;
+    private Map<UUID, Channel> channels = new HashMap<>();
+
+    public Channel createChannel(String name) {
+        Channel channel = new Channel(name);
+        channels.putIfAbsent(channel.getId(), channel);
+
+        return channel;
     }
 
-    @Override
+    public Channel find(UUID channelId) {
+        return channels.get(channelId);
+    }
+
     public List<Channel> findAll() {
+        List<Channel> list = new ArrayList<>();
+        list.addAll(channels.values());
+
         return list;
     }
 
-    @Override
-    public Channel findOne(String name) {
-        for(Channel channel : list) {
-            if(channel.getName().equals(name)) {
-                return channel;
-            }
-        }
-
-        return null;
+    public List<Channel> findByUser(User user) {
+        return channels.values()
+                .stream()
+                .filter(channel ->
+                        channel.getUsers().stream()
+                                .anyMatch(u -> u.getId().equals(user.getId()))
+                )
+                .collect(Collectors.toList());
     }
 
-    @Override
-    public boolean updateChannelName(String name, String newName) {
-        for(Channel channel : list) {
-            if(channel.getName().equals(name)) {
-                channel.updateName(newName);
-                return true;
-            }
-        }
-
-        return false;
+    public void update(Channel channel) {
+        channels.put(channel.getId(), channel);
     }
 
-    @Override
-    public boolean updateChannelDescription(String name, String newDescription) {
-        for(Channel channel : list) {
-            if(channel.getName().equals(name)) {
-                channel.updateDescription(newDescription);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    @Override
-    public boolean deleteChannel(String name) {
-        for(Channel channel : list) {
-            if(channel.getName().equals(name)) {
-                list.remove(channel);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public boolean isExisted(String name) {
-        for(Channel channel : list) {
-            if(channel.getName().equals(name)) {
-                return false;
-            }
-        }
-
-        return true;
+    public void delete(UUID channelId) {
+        channels.remove(channelId);
     }
 }

@@ -1,73 +1,56 @@
 package com.sprint.mission.discodeit.entity;
 
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Channel {
 
     private UUID id;
-    private Long createdAt;
-    private Long updatedAt;
+    private final LocalTime createdAt;
+    private LocalTime updatedAt;
 
     private String name;
-    private String description;
-    
-    public Channel() {
-        id = UUID.randomUUID();
-        createdAt = System.currentTimeMillis();
-        updatedAt = System.currentTimeMillis();
-    }
-    
-    public Channel(String name, String description) {
+    private List<User> users = new ArrayList<>();
+    private List<Message> messages = new ArrayList<>();
+
+    public Channel(String name) {
+        this.id = UUID.randomUUID();
+        this.createdAt = LocalTime.now();
+        this.updatedAt = LocalTime.now();
+
         this.name = name;
-        this.description = description;
     }
 
     public UUID getId() {
         return id;
     }
 
-    public Long getCreatedAt() {
-        return createdAt;
-    }
-
-    public Long getUpdatedAt() {
-        return updatedAt;
-    }
-
     public String getName() {
         return name;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void updateId(UUID id) {
-        this.id = id;
-    }
-
-    public void updateCreatedAt(Long createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public void updateUpdatedAt(Long updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public void updateName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public void updateDescription(String description) {
-        this.description = description;
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public List<Message> getMessages() {
+        return messages;
     }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Channel = [");
-        sb.append("name =").append(name)
-        .append(", description = ").append(description)
-        .append(']');
+        final StringBuilder sb = new StringBuilder("Channel{");
+        sb.append("name='").append(name).append('\'');
+//        sb.append(", users=").append(users);
+//        -> 이 부분을 주석 처리 하지 않으면 user.toString과 channel.toString이 순환 참조되어 스택 오버플로우 발생
+        sb.append(", messages=").append(messages);
+        sb.append('}');
         return sb.toString();
     }
 }

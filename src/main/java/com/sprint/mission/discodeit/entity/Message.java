@@ -1,25 +1,24 @@
 package com.sprint.mission.discodeit.entity;
 
-import java.util.List;
+import java.time.LocalTime;
 import java.util.UUID;
 
 public class Message {
 
     private UUID id;
-    private Long createdAt;
-    private Long updatedAt;
+    private final LocalTime createdAt;
+    private LocalTime updatedAt;
 
-    private String username;
-    private List<String> content;
-    
-    public Message() {
-        id = UUID.randomUUID();
-        createdAt = System.currentTimeMillis();
-        updatedAt = System.currentTimeMillis();
-    }
-    
-    public Message(String username, List<String> content) {
-        this.username = username;
+    private User user;
+    private Channel channel;
+    private String content;
+
+    public Message(User user, Channel channel, String content) {
+        this.id = UUID.randomUUID();
+        this.createdAt = LocalTime.now();
+        this.updatedAt = LocalTime.now();
+        this.user = user;
+        this.channel = channel;
         this.content = content;
     }
 
@@ -27,39 +26,25 @@ public class Message {
         return id;
     }
 
-    public Long getCreatedAt() {
-        return createdAt;
+    public User getUser() {
+        return user;
     }
 
-    public Long getUpdatedAt() {
-        return updatedAt;
+    public Channel getChannel() {
+        return channel;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public List<String> getContent() {
-        return content;
-    }
-
-    public void updateId(UUID id) {
-        this.id = id;
-    }
-
-    public void updateCreatedAt(Long createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public void updateUpdatedAt(Long updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public void updateUsername(String username) {
-        this.username = username;
-    }
-
-    public void updateContent(List<String> content) {
+    public void setContent(String content) {
         this.content = content;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Message{");
+        sb.append("user=").append(user.getName());
+        sb.append(", channel=").append(channel.getName());
+        sb.append(", content='").append(content).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 }

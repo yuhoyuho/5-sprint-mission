@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.service.jcf;
 
+import com.sprint.mission.discodeit.entity.Channel;
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.service.UserService;
 
@@ -7,106 +8,38 @@ import java.util.*;
 
 public class JCFUserService implements UserService {
 
-    private final List<User> list = new ArrayList<>();
+    private Map<UUID, User> users = new HashMap<>();
 
-    @Override
-    public boolean addUser(String password, String name, String email, String city, String street, String zipcode) {
-        User user = new User(password, name, email, city, street, zipcode);
-        boolean flag = isExisted(name, password);
+    public User createUser(String name, String email) {
+        User user = new User(name, email);
+        users.put(user.getId(), user);
 
-        if(flag) {
-            list.add(user);
-            return true;
-        }
-
-        return false;
+        return user;
     }
 
-    @Override
+    public User find(UUID userId) {
+        return users.get(userId);
+    }
+
     public List<User> findAll() {
+        List<User> list = new ArrayList<>();
+        list.addAll(users.values());
+
         return list;
     }
 
-    @Override
-    public User findOne(String name, String password) {
-        for(User user : list) {
-            if(user.getName().equals(name) && user.getPassword().equals(password)) {
-                return user;
-            }
-        }
-
-        return null;
+    public void update(User user) {
+        users.put(user.getId(), user);
     }
 
-    @Override
-    public boolean updateUserName(String name, String password, String newName) {
-        for(User user : list) {
-            if(user.getName().equals(name) && user.getPassword().equals(password)) {
-                user.updateName(newName);
-                return true;
-            }
-        }
-
-        return false;
+    public void delete(UUID userId) {
+        users.remove(userId);
     }
 
-    @Override
-    public boolean updateUserPassword(String name, String password, String newPassword) {
-        for(User user : list) {
-            if(user.getName().equals(name) && user.getPassword().equals(password)) {
-                user.updatePassword(newPassword);
-                return true;
-            }
+    public void joinChannel(User user, Channel channel) {
+        if(!user.getChannels().contains(channel)) {
+            user.getChannels().add(channel);
+            channel.getUsers().add(user);
         }
-
-        return false;
-    }
-
-    @Override
-    public boolean updateUserEmail(String name, String password, String newEmail) {
-        for(User user : list) {
-            if(user.getName().equals(name) && user.getPassword().equals(password)) {
-                user.updateEmail(newEmail);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    @Override
-    public boolean updateUserAddress(String name, String password, String city, String street, String zipcode) {
-        for(User user : list) {
-            if(user.getName().equals(name) && user.getPassword().equals(password)) {
-                user.updateCity(city);
-                user.updateStreet(street);
-                user.updateZipcode(zipcode);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    @Override
-    public boolean deleteUser(String name, String password) {
-        for(User user : list) {
-            if(user.getName().equals(name) && user.getPassword().equals(password)) {
-                list.remove(user);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public boolean isExisted(String name, String password) {
-        for(User user : list) {
-            if(user.getName().equals(name) && user.getPassword().equals(password)) {
-                return false;
-            }
-        }
-
-        return true;
     }
 }

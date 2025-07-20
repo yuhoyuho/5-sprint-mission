@@ -1,24 +1,22 @@
 package com.sprint.mission.discodeit.service;
 
+import com.sprint.mission.discodeit.entity.Channel;
 import com.sprint.mission.discodeit.entity.User;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface UserService {
 
-    boolean addUser(String password, String name, String email, String city, String street, String zipcode);
+    User createUser(String name, String email);
+
+    User find(UUID userId);
 
     List<User> findAll();
 
-    User findOne(String name, String password);
+    void update(User user);
 
-    boolean updateUserName(String name, String password, String newName);
+    void delete(UUID userId);
 
-    boolean updateUserPassword(String name, String password, String newPassword);
-
-    boolean updateUserEmail(String name, String password, String newEmail);
-
-    boolean updateUserAddress(String name, String password, String city, String street, String zipcode);
-
-    boolean deleteUser(String name, String password);
+    void joinChannel(User user, Channel channel);
 }
