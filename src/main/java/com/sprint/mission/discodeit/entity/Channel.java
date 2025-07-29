@@ -8,8 +8,8 @@ import java.util.UUID;
 public class Channel {
 
     private UUID id;
-    private final LocalTime createdAt;
-    private LocalTime updatedAt;
+    private final long createdAt;
+    private long updatedAt;
 
     private String name;
     private List<User> users = new ArrayList<>();
@@ -17,8 +17,8 @@ public class Channel {
 
     public Channel(String name) {
         this.id = UUID.randomUUID();
-        this.createdAt = LocalTime.now();
-        this.updatedAt = LocalTime.now();
+        this.createdAt = System.currentTimeMillis();
+        this.updatedAt = createdAt;
 
         this.name = name;
     }
@@ -41,6 +41,13 @@ public class Channel {
 
     public List<Message> getMessages() {
         return messages;
+    }
+
+    public void updateChannel(Channel channel) {
+        this.name = channel.getName();
+        this.updatedAt = System.currentTimeMillis();
+        this.messages = channel.getMessages();
+        this.users = channel.getUsers();
     }
 
     @Override

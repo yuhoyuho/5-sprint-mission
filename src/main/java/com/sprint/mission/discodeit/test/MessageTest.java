@@ -19,11 +19,11 @@ public class MessageTest {
         Channel channel = channelService.createChannel("channel1");
 
         // create
-        Message message1 = messageService.sendMessage(user, channel, "첫번째");
+        Message message1 = messageService.createMessage(user, channel, "첫번째");
         System.out.println(message1);
 
         // update
-        Message updateMessage = messageService.updateMessage(message1, "첫번째_수정");
+        Message updateMessage = messageService.update(message1, "첫번째_수정");
         System.out.println(updateMessage);
 
         // delete

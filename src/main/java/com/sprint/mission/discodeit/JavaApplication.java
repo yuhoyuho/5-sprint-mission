@@ -18,8 +18,8 @@ public class JavaApplication {
 
         User user = userService.createUser("이유호", "EMAIL");
         Channel channel = channelService.createChannel("스프린트 5기");
-        Message message = messageService.sendMessage(user, channel, "안녕하세요.");
-        Message message1 = messageService.sendMessage(user, channel, "반갑습니다.");
+        Message message = messageService.createMessage(user, channel, "안녕하세요.");
+        Message message1 = messageService.createMessage(user, channel, "반갑습니다.");
 
         userService.joinChannel(user, channel);
 
