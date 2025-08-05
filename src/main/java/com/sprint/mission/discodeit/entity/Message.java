@@ -1,13 +1,14 @@
 package com.sprint.mission.discodeit.entity;
 
+import java.io.Serializable;
 import java.time.LocalTime;
 import java.util.UUID;
 
-public class Message {
+public class Message implements Serializable {
 
     private UUID id;
-    private final LocalTime createdAt;
-    private LocalTime updatedAt;
+    private final long createdAt;
+    private long updatedAt;
 
     private User user;
     private Channel channel;
@@ -15,11 +16,23 @@ public class Message {
 
     public Message(User user, Channel channel, String content) {
         this.id = UUID.randomUUID();
-        this.createdAt = LocalTime.now();
-        this.updatedAt = LocalTime.now();
+        this.createdAt = System.currentTimeMillis();
+        this.updatedAt = createdAt;
         this.user = user;
         this.channel = channel;
         this.content = content;
+    }
+
+    public long getCreatedAt() {
+        return createdAt;
+    }
+
+    public long getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public String getContent() {
+        return content;
     }
 
     public UUID getId() {

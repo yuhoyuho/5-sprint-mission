@@ -5,9 +5,11 @@ import com.sprint.mission.discodeit.entity.Message;
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.service.MessageService;
 
+import java.util.List;
+
 public class JCFMessageService implements MessageService {
 
-    public Message sendMessage(User user, Channel channel, String content) {
+    public Message createMessage(User user, Channel channel, String content) {
         Message message = new Message(user, channel, content);
         channel.getMessages().add(message);
         user.getMessages().add(message);
@@ -23,10 +25,8 @@ public class JCFMessageService implements MessageService {
         channel.getMessages().remove(message);
     }
 
-    public Message updateMessage(Message message, String newContent) {
+    public Message update(Message message, String newContent) {
         User user = message.getUser();
-        Channel channel = message.getChannel();
-
         for(Message m : user.getMessages()) {
             if(m.getId().equals(message.getId())) {
                 m.setContent(newContent);
@@ -34,5 +34,22 @@ public class JCFMessageService implements MessageService {
         }
 
         return message;
+    }
+
+    @Override
+    public Message find(Message message, String content) {
+        User user = message.getUser();
+        for(Message m : user.getMessages()) {
+            if(m.getContent().equals(content)) {
+                return m;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public List<Message> findAll(User user) {
+        return user.getMessages();
     }
 }

@@ -4,11 +4,17 @@ import com.sprint.mission.discodeit.entity.Channel;
 import com.sprint.mission.discodeit.entity.Message;
 import com.sprint.mission.discodeit.entity.User;
 
+import java.util.List;
+
 public interface MessageService {
 
-    Message sendMessage(User user, Channel channel, String content);
+    Message createMessage(User user, Channel channel, String content);
 
     void deleteMessage(Message message);
 
-    Message updateMessage(Message message, String newContent);
+    Message update(Message message, String newContent);
+
+    Message find(Message message, String content);
+
+    List<Message> findAll(User user);
 }
