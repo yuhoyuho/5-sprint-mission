@@ -1,30 +1,24 @@
 package com.sprint.mission.discodeit.service.basic;
 
-import com.sprint.mission.discodeit.dto.channel.ChannelCreateDto;
 import com.sprint.mission.discodeit.entity.Channel;
+import com.sprint.mission.discodeit.entity.ChannelType;
 import com.sprint.mission.discodeit.repository.ChannelRepository;
-import com.sprint.mission.discodeit.repository.MessageRepository;
-import com.sprint.mission.discodeit.repository.ReadStatusRepository;
 import com.sprint.mission.discodeit.service.ChannelService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
-@Service
-@RequiredArgsConstructor
 public class BasicChannelService implements ChannelService {
-
     private final ChannelRepository channelRepository;
-    private final MessageRepository messageRepository;
-    private final ReadStatusRepository readStatusRepository;
+
+    public BasicChannelService(ChannelRepository channelRepository) {
+        this.channelRepository = channelRepository;
+    }
 
     @Override
-    public Channel create(ChannelCreateDto dto) {
-        // 모든 입력을 받았다고 가정
-        Channel channel = new Channel(dto.type(), dto.name(), dto.description());
+    public Channel create(ChannelType type, String name, String description) {
+        Channel channel = new Channel(type, name, description);
         return channelRepository.save(channel);
     }
 
@@ -53,6 +47,5 @@ public class BasicChannelService implements ChannelService {
             throw new NoSuchElementException("Channel with id " + channelId + " not found");
         }
         channelRepository.deleteById(channelId);
-        messageRepository.deleteById(channelId);
     }
 }

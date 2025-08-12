@@ -1,45 +1,38 @@
 package com.sprint.mission.discodeit.service.basic;
 
-import com.sprint.mission.discodeit.dto.message.MessageCreateDto;
-import com.sprint.mission.discodeit.entity.BinaryContent;
 import com.sprint.mission.discodeit.entity.Message;
-import com.sprint.mission.discodeit.repository.BinaryContentRepository;
 import com.sprint.mission.discodeit.repository.ChannelRepository;
 import com.sprint.mission.discodeit.repository.MessageRepository;
 import com.sprint.mission.discodeit.repository.UserRepository;
 import com.sprint.mission.discodeit.service.MessageService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.UUID;
 
-@Service
-@RequiredArgsConstructor
 public class BasicMessageService implements MessageService {
     private final MessageRepository messageRepository;
     //
     private final ChannelRepository channelRepository;
     private final UserRepository userRepository;
-    private final BinaryContentRepository binaryContentRepository;
+
+    public BasicMessageService(MessageRepository messageRepository, ChannelRepository channelRepository, UserRepository userRepository) {
+        this.messageRepository = messageRepository;
+        this.channelRepository = channelRepository;
+        this.userRepository = userRepository;
+    }
 
     @Override
-    public Message create(MessageCreateDto dto) {
-        if (!channelRepository.existsById(dto.channelId())) {
-            throw new NoSuchElementException("Channel not found with id " + dto.channelId());
+    public Message create(String content, UUID channelId, UUID authorId) {
+        if (!channelRepository.existsById(channelId)) {
+            throw new NoSuchElementException("Channel not found with id " + channelId);
         }
-        if (!userRepository.existsById(dto.userId())) {
-            throw new NoSuchElementException("Author not found with id " + dto.userId());
+        if (!userRepository.existsById(authorId)) {
+            throw new NoSuchElementException("Author not found with id " + authorId);
         }
 
-        Message message = new Message(dto.content(), dto.channelId(), dto.userId());
-
-        if(dto.filesId() != null && !dto.filesId().isEmpty()) {
-            for(BinaryContent content : dto.filesId()) {
-                message.addFile(content.getId());
-            }
-        }
+        Message message = new Message(content, channelId, authorId);
         return messageRepository.save(message);
     }
 
@@ -68,6 +61,5 @@ public class BasicMessageService implements MessageService {
             throw new NoSuchElementException("Message with id " + messageId + " not found");
         }
         messageRepository.deleteById(messageId);
-        binaryContentRepository.deleteById(messageId);
     }
 }
