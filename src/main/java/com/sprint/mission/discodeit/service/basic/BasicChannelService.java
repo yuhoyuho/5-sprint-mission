@@ -53,6 +53,5 @@ public class BasicChannelService implements ChannelService {
             throw new NoSuchElementException("Channel with id " + channelId + " not found");
         }
         channelRepository.deleteById(channelId);
-        messageRepository.deleteById(channelId);
     }
 }

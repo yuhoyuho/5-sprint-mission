@@ -8,8 +8,11 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Repository
 public class FileReadStatusRepository implements ReadStatusRepository {
@@ -67,6 +70,66 @@ public class FileReadStatusRepository implements ReadStatusRepository {
             return Optional.of((ReadStatus) ois.readObject());
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException("Failed to read ReadStatus from file.", e);
+        }
+    }
+
+    @Override
+    public List<ReadStatus> findAllByUserId(UUID userId) {
+        try (Stream<Path> paths = Files.walk(DIRECTORY)) {
+            return paths
+                    .filter(Files::isRegularFile)
+                    .filter(path -> path.getFileName().toString().startsWith(userId.toString() + "_"))
+                    .map(path -> {
+                        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path.toFile()))) {
+                            return (ReadStatus) ois.readObject();
+                        } catch (IOException | ClassNotFoundException e) {
+                            throw new RuntimeException("Failed to read ReadStatus from file: " + path, e);
+                        }
+                    })
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new RuntimeException("Could not walk directory: " + DIRECTORY, e);
+        }
+    }
+
+    @Override
+    public ReadStatus findById(UUID id) {
+        try (Stream<Path> paths = Files.walk(DIRECTORY)) {
+            return paths
+                    .filter(Files::isRegularFile)
+                    .map(path -> {
+                        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path.toFile()))) {
+                            return (ReadStatus) ois.readObject();
+                        } catch (IOException | ClassNotFoundException e) {
+                            // 오류 발생 시 null 반환하여 필터링
+                            return null;
+                        }
+                    })
+                    .filter(status -> status != null && status.getId().equals(id))
+                    .findFirst()
+                    .get();
+        } catch (IOException e) {
+            throw new RuntimeException("Could not walk directory: " + DIRECTORY, e);
+        }
+    }
+
+    @Override
+    public void deleteById(UUID id) {
+        try (Stream<Path> paths = Files.walk(DIRECTORY)) {
+            paths
+                    .filter(Files::isRegularFile)
+                    .forEach(path -> {
+                        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path.toFile()))) {
+                            ReadStatus status = (ReadStatus) ois.readObject();
+                            if (status.getId().equals(id)) {
+                                Files.delete(path);
+                            }
+                        } catch (IOException | ClassNotFoundException e) {
+                            // 파일 읽기 오류는 무시하고 계속 진행
+                        }
+                    });
+        } catch (IOException e) {
+            throw new RuntimeException("Could not walk directory for deletion: " + DIRECTORY, e);
         }
     }
 }

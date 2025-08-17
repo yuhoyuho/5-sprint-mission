@@ -11,9 +11,7 @@ import com.sprint.mission.discodeit.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +37,7 @@ public class BasicUserService implements UserService {
 
         // 사용자 저장
         User user = new User(dto.username(), dto.email(), dto.password());
+        userRepository.save(user);
 
         // 사용자 상태 저장
         UserStatus userStatus = new UserStatus(user);

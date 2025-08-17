@@ -15,10 +15,11 @@ public class JCFReadStatusRepository implements ReadStatusRepository {
     // 동시성 문제 때문에 CopyOnWriteArrayList 사용
     private final List<ReadStatus> data = new CopyOnWriteArrayList<>();
 
-    public Optional<ReadStatus> findById(UUID id) {
+    public ReadStatus findById(UUID id) {
         return data.stream()
                 .filter(status -> status.getId().equals(id))
-                .findFirst();
+                .findFirst()
+                .get();
     }
 
     public List<ReadStatus> findAllByUserId(UUID userId) {
