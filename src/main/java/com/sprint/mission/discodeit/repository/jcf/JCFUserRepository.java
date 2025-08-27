@@ -2,31 +2,50 @@ package com.sprint.mission.discodeit.repository.jcf;
 
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.repository.UserRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
 public class JCFUserRepository implements UserRepository {
+    private final Map<UUID, User> data;
 
-    private final Map<UUID, User> users = new HashMap<>();
+    public JCFUserRepository() {
+        this.data = new HashMap<>();
+    }
 
     @Override
     public User save(User user) {
-        users.put(user.getId(), user);
+        this.data.put(user.getId(), user);
         return user;
     }
 
     @Override
-    public Optional<User> findById(UUID userId) {
-        return Optional.ofNullable(users.get(userId));
+    public Optional<User> findById(UUID id) {
+        return Optional.ofNullable(this.data.get(id));
     }
 
     @Override
     public List<User> findAll() {
-        return new ArrayList<>(users.values());
+        return this.data.values().stream().toList();
     }
 
     @Override
-    public void deleteById(UUID userId) {
-        users.remove(userId);
+    public boolean existsById(UUID id) {
+        return this.data.containsKey(id);
+    }
+
+    @Override
+    public void deleteById(UUID id) {
+        this.data.remove(id);
+    }
+
+    @Override
+    public boolean findByEmail(String email) {
+        return this.data.values().stream().anyMatch(user -> user.getEmail().equals(email));
+    }
+
+    @Override
+    public User findByUsername(String username) {
+        return this.data.values().stream().filter(user -> user.getUsername().equals(username)).findFirst().orElse(null);
     }
 }

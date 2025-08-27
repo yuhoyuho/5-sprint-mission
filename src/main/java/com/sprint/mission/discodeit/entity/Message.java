@@ -1,63 +1,53 @@
 package com.sprint.mission.discodeit.entity;
 
+import lombok.Getter;
+
 import java.io.Serializable;
-import java.time.LocalTime;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
+@Getter
 public class Message implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private UUID id;
-    private final long createdAt;
-    private long updatedAt;
-
-    private User user;
-    private Channel channel;
+    private Instant createdAt;
+    private Instant updatedAt;
+    //
     private String content;
+    //
+    private UUID channelId;
+    private UUID authorId;
+    private List<UUID> files;
 
-    public Message(User user, Channel channel, String content) {
+    public Message(String content, UUID channelId, UUID authorId) {
         this.id = UUID.randomUUID();
-        this.createdAt = System.currentTimeMillis();
-        this.updatedAt = createdAt;
-        this.user = user;
-        this.channel = channel;
+        this.createdAt = Instant.now();
+        //
         this.content = content;
+        this.channelId = channelId;
+        this.authorId = authorId;
+        this.files = new ArrayList<>();
     }
 
-    public long getCreatedAt() {
-        return createdAt;
+    public void addFile(UUID fileId) {
+        if(fileId != null && !files.contains(fileId)) {
+            files.add(fileId);
+            this.updatedAt = Instant.now();
+        }
     }
 
-    public long getUpdatedAt() {
-        return updatedAt;
-    }
+    public void update(String newContent) {
+        boolean anyValueUpdated = false;
+        if (newContent != null && !newContent.equals(this.content)) {
+            this.content = newContent;
+            anyValueUpdated = true;
+        }
 
-    public String getContent() {
-        return content;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public Channel getChannel() {
-        return channel;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("Message{");
-        sb.append("user=").append(user.getName());
-        sb.append(", channel=").append(channel.getName());
-        sb.append(", content='").append(content).append('\'');
-        sb.append('}');
-        return sb.toString();
+        if (anyValueUpdated) {
+            this.updatedAt = Instant.now();
+        }
     }
 }

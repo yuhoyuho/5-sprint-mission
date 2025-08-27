@@ -1,64 +1,44 @@
 package com.sprint.mission.discodeit.entity;
 
+import lombok.Getter;
+
 import java.io.Serializable;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.Instant;
 import java.util.UUID;
 
+@Getter
 public class Channel implements Serializable {
-
+    private static final long serialVersionUID = 1L;
     private UUID id;
-    private final long createdAt;
-    private long updatedAt;
-
+    private Instant createdAt;
+    private Instant updatedAt;
+    //
+    private ChannelType type;
     private String name;
-    private List<User> users = new ArrayList<>();
-    private List<Message> messages = new ArrayList<>();
+    private String description;
 
-    public Channel(String name) {
+    public Channel(ChannelType type, String name, String description) {
         this.id = UUID.randomUUID();
-        this.createdAt = System.currentTimeMillis();
-        this.updatedAt = createdAt;
-
+        this.createdAt = Instant.now();
+        //
+        this.type = type;
         this.name = name;
+        this.description = description;
     }
 
-    public UUID getId() {
-        return id;
-    }
+    public void update(String newName, String newDescription) {
+        boolean anyValueUpdated = false;
+        if (newName != null && !newName.equals(this.name)) {
+            this.name = newName;
+            anyValueUpdated = true;
+        }
+        if (newDescription != null && !newDescription.equals(this.description)) {
+            this.description = newDescription;
+            anyValueUpdated = true;
+        }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public List<Message> getMessages() {
-        return messages;
-    }
-
-    public void updateChannel(Channel channel) {
-        this.name = channel.getName();
-        this.updatedAt = System.currentTimeMillis();
-        this.messages = channel.getMessages();
-        this.users = channel.getUsers();
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("Channel{");
-        sb.append("name='").append(name).append('\'');
-//        sb.append(", users=").append(users);
-//        -> 이 부분을 주석 처리 하지 않으면 user.toString과 channel.toString이 순환 참조되어 스택 오버플로우 발생
-        sb.append(", messages=").append(messages);
-        sb.append('}');
-        return sb.toString();
+        if (anyValueUpdated) {
+            this.updatedAt = Instant.now();
+        }
     }
 }

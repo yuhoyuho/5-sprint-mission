@@ -1,80 +1,64 @@
 package com.sprint.mission.discodeit.entity;
 
+import lombok.Getter;
+
 import java.io.Serializable;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.Instant;
 import java.util.UUID;
 
+@Getter
 public class User implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private UUID id;
-    private final long createdAt;
-    private long updatedAt;
-
-    private String name;
+    private Instant createdAt;
+    private Instant updatedAt;
+    //
+    private String username;
     private String email;
+    private String password;
 
-    private List<Channel> channels = new ArrayList<>();
-    private List<Message> messages = new ArrayList<>();
+    private UUID profileId;
 
-    public User(String name, String email) {
+    public User(String username, String email, String password) {
         this.id = UUID.randomUUID();
-        this.createdAt = System.currentTimeMillis();
-        this.updatedAt = createdAt;
-
-        this.name = name;
+        this.createdAt = Instant.now();
+        //
+        this.username = username;
         this.email = email;
+        this.password = password;
     }
 
-    public UUID getId() {
-        return id;
+    public void update(String newUsername, String newEmail, String newPassword) {
+        boolean anyValueUpdated = false;
+        if (newUsername != null && !newUsername.equals(this.username)) {
+            this.username = newUsername;
+            anyValueUpdated = true;
+        }
+        if (newEmail != null && !newEmail.equals(this.email)) {
+            this.email = newEmail;
+            anyValueUpdated = true;
+        }
+        if (newPassword != null && !newPassword.equals(this.password)) {
+            this.password = newPassword;
+            anyValueUpdated = true;
+        }
+
+        if (anyValueUpdated) {
+            this.updatedAt = Instant.now();
+        }
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("User{");
-        sb.append("name='").append(name).append('\'');
-        sb.append(", email='").append(email).append('\'');
-        sb.append(", channels=").append(channels);
-        sb.append(", messages=").append(messages);
-        sb.append('}');
-        return sb.toString();
+    public void updateProfileId(UUID newId) {
+        this.profileId = newId;
+        this.updatedAt = Instant.now();
     }
 
-    public String getName() {
-        return name;
+    public void updateName(String name) {
+        this.username = name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
+    public void updateEmail(String email) {
         this.email = email;
-    }
-
-    public List<Channel> getChannels() {
-        return channels;
-    }
-
-    public void setChannels(List<Channel> channels) {
-        this.channels = channels;
-    }
-
-    public List<Message> getMessages() {
-        return messages;
-    }
-
-    public void updateUser(User user) {
-        this.name = user.getName();
-        this.email = user.getEmail();
-        this.updatedAt = LocalTime.now().toSecondOfDay();
-        this.channels = user.getChannels();
-        this.messages = user.getMessages();
     }
 }
